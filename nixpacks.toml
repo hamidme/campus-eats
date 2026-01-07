@@ -1,4 +1,3 @@
-# This file tells Railway exactly what to install
 [phases.setup]
 nixPkgs = [
     "php84", 
@@ -9,8 +8,7 @@ nixPkgs = [
     "php84Extensions.bcmath", 
     "php84Extensions.gd", 
     "php84Extensions.fileinfo",
-    "nodejs", 
-    "npm"
+    "nodejs"
 ]
 
 [phases.build]
