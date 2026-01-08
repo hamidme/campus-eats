@@ -23,7 +23,7 @@ RUN rm -f composer.lock
 # ------------------------------------------------
 
 # 5. Install dependencies (Ignore version errors)
-RUN composer install --ignore-platform-reqs --no-interaction --optimize-autoloader
+RUN composer install --ignore-platform-reqs --no-audit --no-interaction --optimize-autoloader
 
 # 6. Build frontend
 RUN npm install && npm run build
