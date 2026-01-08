@@ -31,6 +31,5 @@ RUN npm install && npm run build
 # 7. Fix permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 8. Start the server (Using Artisan Serve instead of Apache)
-# This command runs migrations automatically, links storage, and starts the server on the correct Railway Port.
-CMD bash -c "php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT"
+# 8. Start the server (Skip migration for now to prevent crashing)
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
