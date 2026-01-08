@@ -31,5 +31,5 @@ RUN npm install && npm run build
 # 7. Fix permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 8. Start the server (Skip migration for now to prevent crashing)
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+# 8. Start server (Run migration automatically on startup)
+CMD bash -c "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
