@@ -28,12 +28,9 @@ RUN composer install --ignore-platform-reqs --no-security-blocking --no-interact
 # 6. Build frontend
 RUN npm install && npm run build
 
-# 7. Permissions & Config
+# 7. Fix permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/ports.conf /etc/apache2/sites-enabled/000-default.conf
 
-# 8. Start
-CMD ["apache2-foreground"]
+# 8. Start the server (Using Artisan Serve instead of Apache)
+# This command runs migrations automatically, links storage, and starts the server on the correct Railway Port.
+CMD bash -c "php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT"
