@@ -16,7 +16,7 @@ class MyOrders extends Component
 
         // 2. Fetch orders for this user
         $orders = Order::where('user_id', $userId)
-            ->with(['items', 'vendor']) // Load the related data eagerly
+            ->with(['vendor']) // Load the related data eagerly
             ->latest() // Newest first
             ->get();
 

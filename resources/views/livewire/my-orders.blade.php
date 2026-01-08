@@ -39,7 +39,7 @@
 
             <div class="p-4 space-y-2">
                 {{-- The '?? []' tells Laravel: If items is null, use an empty list [] --}}
-                @foreach($order->items ?? [] as $item)  
+                @foreach(is_string($order->items) ? json_decode($order->items, true) : $order->items as $item) 
                     <div class="flex justify-between text-sm">
                         {{-- Use brackets [] instead of arrows -> --}}
                         {{-- Also changed 'menu_item_name' to 'name' to match your Cart data --}}

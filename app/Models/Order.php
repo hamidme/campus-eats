@@ -11,20 +11,21 @@ class Order extends Model
 
     protected $guarded = [];
 
-    // 🚨 ADD THIS BLOCK 🚨
+    // 🚨 THIS IS THE MAGIC PART 🚨
+    // It automatically converts the database text into an Array
     protected $casts = [
-        'items' => 'array', // <--- This fixes the "foreach" error
+        'items' => 'array',
     ];
 
-    // An order belongs to a Customer (User)
+    // Relationship: User who bought the food
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // An order belongs to a Vendor
+    // Relationship: Vendor who sold the food
     public function vendor()
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->belongsTo(User::class, 'vendor_id');
     }
 }
