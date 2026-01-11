@@ -9,23 +9,22 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $guarded = []; // Allows mass assignment
 
-    // 🚨 THIS IS THE MAGIC PART 🚨
-    // It automatically converts the database text into an Array
-    protected $casts = [
-        'items' => 'array',
-    ];
+        public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 
-    // Relationship: User who bought the food
+    // Relationship: An order belongs to a specific User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relationship: Vendor who sold the food
+    // Relationship: An order belongs to a specific Vendor (Shop)
     public function vendor()
     {
-        return $this->belongsTo(User::class, 'vendor_id');
+        return $this->belongsTo(Vendor::class);
     }
 }

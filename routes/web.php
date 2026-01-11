@@ -1,31 +1,56 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Home;
-use App\Livewire\Cart;
-use App\Models\MenuItem;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\WalletController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\KitchenController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendorController;
 
-Route::get('/', function () {
-    // 2. Fetch the actual food from your database
-    $menuItems = MenuItem::all();
-    
-    // 3. Send it to your specific layout file
-    return view('home', ['menuItems' => $menuItems]);
-});
-
-
-Route::get('/cart', Cart::class)->name('cart');
-Route::get('/my-orders', App\Livewire\MyOrders::class)->name('my-orders');
+// --- PUBLIC ROUTES (Everyone can see these) ---
+Route::get('/', [MenuController::class, 'index'])->name('home');
 
 // Auth Routes
-Route::get('/login', App\Livewire\Auth\Login::class)->name('login');
-Route::get('/register', App\Livewire\Auth\Register::class)->name('register');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
+Route::post('/kitchen/update/{id}', [KitchenController::class, 'updateStatus'])->name('kitchen.update');
+Route::get('/vendor/menu', [VendorController::class, 'myMenu'])->name('vendor.menu');
+Route::post('/vendor/menu/{id}/toggle', [VendorController::class, 'toggle'])->name('vendor.toggle');
+Route::post('/cart/add-variant', [CartController::class, 'addVariant'])->name('cart.add.variant');
 
-// Protect the Orders Page (Only logged in users can see it)
-Route::get('/my-orders', App\Livewire\MyOrders::class)
-    ->middleware('auth')
-    ->name('my-orders');
+// --- ADMIN ROUTES (Banker Panel) ---
+// In a real app, we would check 'if(user->is_admin)' here.
+Route::get('/admin/banker', [AdminController::class, 'index'])->name('admin.index');
+Route::post('/admin/approve/{id}', [AdminController::class, 'approve'])->name('admin.approve');
+Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
 
-Route::get('/profile', App\Livewire\Profile::class)
-    ->middleware('auth') // <--- Important! Guests get kicked to login
-    ->name('profile');
+// THIS IS THE LINE YOU WERE MISSING
+Route::get('/register', function() {
+    return "Registration Page Coming Soon!";
+})->name('register');
+
+
+// --- PROTECTED ROUTES (Must be Logged In) ---
+Route::middleware(['auth'])->group(function () {
+    
+    // 2. ORDERS
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+
+    // 3. CART SYSTEM
+    Route::get('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
+
+    // 4. WALLET SYSTEM
+    Route::get('/wallet/topup', [WalletController::class, 'showTopUp'])->name('wallet.topup');
+    Route::post('/wallet/topup', [WalletController::class, 'processTopUp'])->name('wallet.process');
+
+});
